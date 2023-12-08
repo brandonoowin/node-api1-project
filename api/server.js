@@ -7,11 +7,24 @@ const server = express();
 server.get('/api/users', (req, res) => {
     User.find()
     .then(users => {
-        throw new Error('LOL RIP')
+        res.status(200).json({users})
     })
     .catch(err => {
         res.status(500).json({
             message: 'error getting users',
+            err: err.message,
+        })
+    })
+})
+
+server.get('/api/users/:id', (req, res) => {
+    User.findById(req.params.id)
+    .then(user => {
+        res.status(200).json({user})
+    })
+    .catch(err => {
+        res.status(500).json({
+            message: 'error getting users by ID',
             err: err.message,
         })
     })
