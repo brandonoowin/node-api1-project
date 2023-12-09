@@ -6,14 +6,20 @@ const server = express();
 server.use(express.json()) //ability to read JSON data
 
 server.delete('/api/users/:id', async (req, res) => {
-    const possibleUser = await User.findById(req.params.id)
-    if (!possibleUser) {
-            res.status(404).json({
-                message: "The user with the specified ID does not exist"
+    try {
+        const possibleUser = await User.findById(req.params.id)
+        if (!possibleUser) {
+                res.status(404).json({
+                    message: "The user with the specified ID does not exist"
+            })
+        } else {
+            const deletedUser = await User.remove(possibleUser.id)
+            res.status(200).json(deletedUser)
+        }
+    } catch (err) {
+        res.status(500).json({
+            message: 'The user could not be removed',
         })
-    } else {
-        const deletedUser = await User.remove(possibleUser.id)
-        res.status(200).json(deletedUser)
     }
 })
 
@@ -39,7 +45,7 @@ server.post('/api/users', (req, res) => {
 })
 
 server.put('./api/users/:id', (req, res) => {
-    const currentUser = User.findById(res.params.id)
+    const currentUser = User.findById(req.params.id)
     console.log(currentUser);
 })
 
